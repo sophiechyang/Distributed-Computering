@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+<body onload="initPage();">
+	<h2>Video Sites</h2>
+	<table id="site">
+		<thead>
+			<tr>
+				<th>CommonName</th>
+				<th>URL</th>
+				<th>Reliability</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	<div class="table-wrapper" id="videolist">
+		<table id="video">
+			<caption>Video List</caption>
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Runtime</th>
+					<th>Format</th>
+				</tr>                   
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<script type="text/javascript">
+		// initPage to display video sites
+		function initPage()
+		{
+			document.getElementById('videolist').style.display = "none";
+			Ajax(
+				'GET',
+				'server.php',
+				null,
+				function(data)
+				{
+					var result = JSON.parse(data);
+					var site_html = '';
+					for (index in result)
+					{
+						site_html += '<tr>';
+						site_html += '<td><a href="#" onclick="chooseSite(\'' + result[index]['url'] + '\')">' + result[index]['name'] + '</a></td>';
+						site_html += '<td>' + result[index]['url'] + '</td>';
+						site_html += '<td>' + result[index]['reliability'] + '</td>';
+						site_html += '</tr>';
+					}
+					document.getElementsByTagName('tbody')[0].innerHTML = site_html;
+				},
+				function(error)
+				{
+					console.log(error);
+				}
+			);
+		}
+
+		function chooseSite(url)
+		{
+			var sendData = {"url": url};
+			Ajax(
+				'GET',
+				'server.php',
+				sendData,
+				function(data)
+				{
+					var result = JSON.parse(data);
+					var videos = result['video'];
+					var video_html = '';
+					for (index in videos)
+					{
+						video_html += '<tr>';
+						video_html += '<td>' + videos[index]['title'] + '</a></td>';
+						video_html += '<td>' + videos[index]['runtime'] + '</td>';
+						video_html += '<td>' + videos[index]['format'] + '</td>';
+						video_html += '</tr>';
+					}
+					document.getElementsByTagName('tbody')[1].innerHTML = video_html;
+					document.getElementById('videolist').style.display = "block";
+				},
+				function(error)
+				{
+					console.log(error);
+				}
+			);
+		}
+
+		// ajax communicate with the server
+		function Ajax(type, url, data, success, failed)
+		{
+			var xmlhttp;
+			if (window.XMLHttpRequest)
+			{
+				xmlhttp = new XMLHttpRequest();
+			}
+			else
+			{
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+
+			var type = type.toUpperCase();
+			var random = Math.random();
+			if (typeof data == 'object')
+			{
+				var str = '';
+				for (var key in data)
+				{
+					str += key+'='+data[key]+'&';
+				}
+				data = str.replace(/&$/, '');
+			}
+
+			if (type == 'GET')
+			{
+				if (data)
+				{
+					xmlhttp.open('GET', url + '?' + data, true);
+				}
+				else
+				{
+					xmlhttp.open('GET', url + '?t=' + random, true);
+				}
+				xmlhttp.send();
+			}
+			else if (type == 'POST')
+			{
+				xmlhttp.open('POST', url, true);
+				xmlhttp.send(data);
+			}
+
+			xmlhttp.onreadystatechange = function ()
+			{
+				if (xmlhttp.readyState == 4)
+				{
+					if (xmlhttp.status == 200)
+					{
+						success(xmlhttp.responseText);
+					}
+					else
+					{
+						if (failed)
+						{
+							failed(xmlhttp.status);
+						}
+					}
+				}
+			}
+		}
+	</script>
+</body>
+</html>

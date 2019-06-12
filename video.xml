@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<?xml-stylesheet type="text/xsl" href="video.xsl"?>
+<list>
+    <Site>
+        <url></url>
+        <name></name>
+        <reliability></reliability>
+        <videos>
+        	<video>
+        		<title></title>
+        		<runtime></runtime>
+        		<format></format>
+        	</video>
+        	<video>
+        		<title></title>
+        		<runtime></runtime>
+        		<format></format>
+        	</video>
+        </videos>
+    </Site>
+    <Site>
+        <url></url>
+        <name></name>
+        <reliability></reliability>
+        <videos>
+        	<video>
+        		<title></title>
+        		<runtime></runtime>
+        		<format></format>
+        	</video>
+        	<video>
+        		<title></title>
+        		<runtime></runtime>
+        		<format></format>
+        	</video>
+        </videos>
+    </Site>
+</list>
