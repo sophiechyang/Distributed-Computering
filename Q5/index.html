@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <article>
+        <h1></h1>
+        <p><span><br></span></p>
+        <main>
+            <article>
+                <p>
+                    <span>
+                        <br>                        
+                    </span>  
+                    <img src="" alt="">                  
+                </p>
+                <h1></h1>
+                <hr>
+            </article>
+            <hr>
+        </main>
+    </article>
+    <img src="/" alt="">
+    <hr>
+    <script>
+        var mytree = [];
+        var root = document.documentElement;
+
+        //get depth of the node
+        var depth = function (parent, descendant) {
+            var depth = 1;
+            while (descendant !== parent) {
+                depth++;
+                descendant = descendant.parentElement;
+            }
+            return depth;
+        }
+        //add space to indent the tree
+        var addspaces = function (num) {
+            var space = '&nbsp;&nbsp;&nbsp;&nbsp;';
+            return space.repeat(num);;
+        }
+        //check if node tagName is a validate html closing tag
+        var checkClosingTag = function (tagname) {
+            try {
+                var e = document.createElement(tagname);
+                return e.outerHTML.indexOf("/") != -1;
+            } catch (ex) {
+                return false;
+            }
+        }
+        //recursively walk the DOM for an associated HTML 
+        var recursiveWalkDOM = function (node, openingFunc, closingFunc) {
+            openingFunc(node);//store opening tag
+            node = node.firstChild;
+            while (node) {
+                recursiveWalkDOM(node, openingFunc, closingFunc);
+                closingFunc(node); //store closing tag
+                node = node.nextSibling;
+            }
+        };
+        //call recursiveWalkDOM function passing root, opening and closing function
+        recursiveWalkDOM(root,//root (start node)
+            function (node) {//opening
+                var level = depth(root, node);
+                if (node.nodeType === document.ELEMENT_NODE) {
+                    mytree.push(addspaces(level) + level + ': &lt;' + node.tagName + '&gt;');
+                }
+            }, function (node) { //closing
+                var level = depth(root, node);
+                if (checkClosingTag(node.tagName) && node.nodeType === document.ELEMENT_NODE) {
+                    mytree.push(addspaces(level) + level + ': &lt;/' + node.tagName + '&gt;');
+                }
+            });
+        //get root node tagname
+        var level = depth(root, root);
+        mytree.push(addspaces(level) + level + ': &lt;/' + root.tagName + '&gt;');
+        //dispaly the dom tree
+        setTimeout(function () {  //wait for two seconds
+            var x = document.body;
+            while (x.hasChildNodes()) {
+                x.removeChild(x.lastChild); //remove current body child nodes
+            }
+            //add the DOM tree to DOM
+            var title = document.createElement("span");   // Create a <span> element
+            title.innerHTML = "Processing tree... <br>";       // Insert title text
+            x.appendChild(title);
+            title.style.fontSize = "30px";
+            title.style.fontWeight = 'bold';
+            title.style.color = 'blue';
+            
+            //add the DOM tree to DOM
+            setTimeout(function () { //wait for three seconds
+                for (var i = 0; i < mytree.length; i++) {  // create the dom tree structure
+                    var span = document.createElement("span");
+                    span.innerHTML = "<code>" + mytree[i] + "<br></code>";
+                    x.appendChild(span);
+                    span.style.fontSize = "20px";
+                }
+                title.innerHTML = "DOM Tree: <br>";
+                title.style.color = 'green';
+            }, 3000);
+        }, 2000);      
+    </script>
+</body>
+
+</html>
